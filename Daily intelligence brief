@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Intelligence Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0d0d0b;
+  --paper:#f8f6f1;
+  --surface:#ffffff;
+  --muted:#7a7670;
+  --border:#e2ddd4;
+  --border-strong:#c8c2b6;
+  --accent:#1a472a;
+  --accent-light:#e8f0eb;
+  --amber:#92600a;
+  --amber-light:#fdf3e0;
+  --rust:#8b2e12;
+  --rust-light:#fceae5;
+  --blue:#0f3d6e;
+  --blue-light:#e5eef8;
+  --signal:#1a472a;
+}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Syne',sans-serif;
+  font-size:14px;
+  line-height:1.6;
+  min-height:100vh;
+}
+.page{max-width:860px;margin:0 auto;padding:40px 32px 80px}
+
+/* HEADER */
+.header{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:end;
+  border-bottom:2px solid var(--ink);
+  padding-bottom:16px;
+  margin-bottom:32px;
+  gap:16px;
+}
+.header-left{}
+.masthead-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.masthead-title{
+  font-size:36px;
+  font-weight:800;
+  letter-spacing:-1.5px;
+  line-height:1;
+  color:var(--ink);
+}
+.masthead-title em{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-weight:400;
+  color:var(--accent);
+}
+.header-right{
+  text-align:right;
+}
+.date-display{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.8;
+}
+.day-counter{
+  font-size:48px;
+  font-weight:800;
+  letter-spacing:-2px;
+  color:var(--border-strong);
+  line-height:1;
+}
+
+/* TIMER BAR */
+.timer-bar{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 20px;
+  margin-bottom:28px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.timer-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.timer-display{
+  font-family:'JetBrains Mono',monospace;
+  font-size:22px;
+  font-weight:500;
+  color:var(--ink);
+  min-width:72px;
+}
+.timer-btn{
+  background:var(--ink);
+  color:var(--paper);
+  border:none;
+  border-radius:4px;
+  padding:6px 16px;
+  font-family:'Syne',sans-serif;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.06em;
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.timer-btn:hover{opacity:.8}
+.timer-btn.secondary{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid var(--border);
+}
+.timer-progress{
+  flex:1;
+  height:4px;
+  background:var(--border);
+  border-radius:2px;
+  overflow:hidden;
+  min-width:80px;
+}
+.timer-fill{
+  height:100%;
+  background:var(--accent);
+  border-radius:2px;
+  width:0%;
+  transition:width .5s linear;
+}
+.phase-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--accent);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+/* SECTIONS */
+.section{margin-bottom:24px}
+.section-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+.section-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--paper);
+  background:var(--ink);
+  padding:3px 8px;
+  border-radius:3px;
+  letter-spacing:.06em;
+}
+.section-num.amber{background:var(--amber)}
+.section-num.rust{background:var(--rust)}
+.section-num.blue{background:var(--blue)}
+.section-num.accent{background:var(--accent)}
+.section-title{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--ink);
+}
+.section-time{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  margin-left:auto;
+  letter-spacing:.08em;
+}
+
+/* INPUT STYLES */
+.signal-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:12px;
+}
+.signal-box:focus-within{
+  border-color:var(--border-strong);
+}
+.field-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:6px;
+  display:block;
+}
+.field-input{
+  width:100%;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-family:'Syne',sans-serif;
+  font-size:15px;
+  font-weight:400;
+  color:var(--ink);
+  line-height:1.6;
+  resize:none;
+  min-height:40px;
+}
+.field-input::placeholder{color:var(--border-strong)}
+.field-input.mono{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+}
+
+/* SIGNAL INPUT — big headline */
+.signal-headline{
+  background:var(--ink);
+  border-radius:8px;
+  padding:20px 24px;
+  margin-bottom:12px;
+}
+.signal-headline .field-label{color:rgba(248,246,241,.5)}
+.signal-headline .field-input{
+  font-size:20px;
+  font-weight:700;
+  color:var(--paper);
+  min-height:32px;
+}
+.signal-headline .field-input::placeholder{color:rgba(248,246,241,.3)}
+
+/* FIVE LENS GRID */
+.lens-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.lens-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+  border-left:3px solid var(--border-strong);
+}
+.lens-card.tech{border-left-color:#1a6b8a}
+.lens-card.behavior{border-left-color:#7b5ea7}
+.lens-card.bizmodel{border-left-color:var(--amber)}
+.lens-card.capital{border-left-color:var(--accent)}
+.lens-card.india{border-left-color:var(--rust)}
+.lens-card .field-input{font-size:13px;min-height:52px}
+
+/* POSITION OUTPUTS */
+.output-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+  margin-bottom:12px;
+}
+.output-card{
+  border-radius:8px;
+  padding:14px 16px;
+}
+.output-card.invest{background:var(--accent-light);border:1px solid #b8d4c0}
+.output-card.build{background:var(--amber-light);border:1px solid #f0d090}
+.output-card.career{background:var(--blue-light);border:1px solid #b0c8e8}
+.output-card .field-label{
+  color:var(--muted);
+  margin-bottom:6px;
+}
+.output-card.invest .field-label{color:var(--accent)}
+.output-card.build .field-label{color:var(--amber)}
+.output-card.career .field-label{color:var(--blue)}
+.output-card .field-input{font-size:13px;min-height:60px}
+
+/* CONNECT BOX */
+.connect-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.connect-divider{
+  border:none;
+  border-left:1px solid var(--border);
+  margin:0;
+}
+
+/* PATTERN TRACKER */
+.pattern-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
+  flex-wrap:wrap;
+}
+.pattern-tag{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:4px 12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .15s;
+  user-select:none;
+}
+.pattern-tag:hover{border-color:var(--border-strong);color:var(--ink)}
+.pattern-tag.active{
+  background:var(--ink);
+  color:var(--paper);
+  border-color:var(--ink);
+}
+.pattern-custom{
+  border:1px dashed var(--border-strong);
+  border-radius:20px;
+  padding:4px 12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  background:transparent;
+  outline:none;
+  width:140px;
+}
+
+/* STREAK / HISTORY */
+.streak-bar{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  padding:12px 0;
+  border-top:1px solid var(--border);
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+.streak-day{
+  width:22px;
+  height:22px;
+  border-radius:4px;
+  background:var(--border);
+  cursor:pointer;
+  transition:background .15s;
+  position:relative;
+}
+.streak-day.done{background:var(--accent)}
+.streak-day.today{
+  background:var(--amber);
+  outline:2px solid var(--amber);
+  outline-offset:2px;
+}
+.streak-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  margin-left:8px;
+  letter-spacing:.08em;
+}
+.streak-count{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  color:var(--accent);
+  margin-left:4px;
+}
+
+/* DIVIDER */
+.rule{border:none;border-top:1px solid var(--border);margin:20px 0}
+.rule-label{
+  text-align:center;
+  position:relative;
+  margin:24px 0;
+}
+.rule-label::before{
+  content:'';
+  position:absolute;
+  top:50%;left:0;right:0;
+  height:1px;background:var(--border);
+}
+.rule-label span{
+  position:relative;
+  background:var(--paper);
+  padding:0 12px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--border-strong);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+/* SAVE */
+.save-bar{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-top:32px;
+  padding-top:20px;
+  border-top:2px solid var(--ink);
+  flex-wrap:wrap;
+}
+.save-btn{
+  background:var(--ink);
+  color:var(--paper);
+  border:none;
+  border-radius:5px;
+  padding:10px 28px;
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.04em;
+  cursor:pointer;
+  transition:opacity .15s;
+}
+.save-btn:hover{opacity:.8}
+.export-btn{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid var(--border);
+  border-radius:5px;
+  padding:10px 20px;
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.export-btn:hover{border-color:var(--border-strong);color:var(--ink)}
+.save-status{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  margin-left:auto;
+}
+
+/* PAST ENTRIES */
+.past-section{margin-top:40px}
+.past-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+}
+.past-title{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.past-list{display:flex;flex-direction:column;gap:8px}
+.past-entry{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 18px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:16px;
+  align-items:center;
+  cursor:pointer;
+  transition:border-color .15s;
+}
+.past-entry:hover{border-color:var(--border-strong)}
+.past-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+.past-signal{
+  font-size:13px;
+  font-weight:600;
+  color:var(--ink);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.past-tags{display:flex;gap:4px;flex-wrap:wrap}
+.past-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  background:var(--accent-light);
+  color:var(--accent);
+  padding:2px 8px;
+  border-radius:20px;
+  letter-spacing:.06em;
+}
+
+/* TOOLTIP */
+.tip{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  border-bottom:1px dotted var(--border-strong);
+  cursor:help;
+}
+
+@media(max-width:600px){
+  .page{padding:24px 16px 60px}
+  .lens-grid{grid-template-columns:1fr}
+  .output-row{grid-template-columns:1fr}
+  .connect-box{grid-template-columns:1fr}
+  .masthead-title{font-size:26px}
+  .day-counter{font-size:32px}
+  .header{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-left">
+      <div class="masthead-label">Daily Intelligence Brief</div>
+      <div class="masthead-title">Signal &amp; <em>Strategy</em></div>
+    </div>
+    <div class="header-right">
+      <div class="day-counter" id="dayCounter">001</div>
+      <div class="date-display" id="dateDisplay">—</div>
+    </div>
+  </header>
+
+  <!-- TIMER -->
+  <div class="timer-bar">
+    <div>
+      <div class="timer-label">Session Timer</div>
+      <div class="timer-display" id="timerDisplay">30:00</div>
+    </div>
+    <div class="timer-progress">
+      <div class="timer-fill" id="timerFill"></div>
+    </div>
+    <div class="phase-label" id="phaseLabel">Ready</div>
+    <button class="timer-btn" id="timerStart" onclick="startTimer()">Start 30-min session</button>
+    <button class="timer-btn secondary" onclick="resetTimer()">Reset</button>
+  </div>
+
+  <!-- SECTION 1: THE SIGNAL -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <span class="section-title">Today's Signal</span>
+      <span class="section-time">5 min · scan one source</span>
+    </div>
+
+    <div class="signal-headline">
+      <label class="field-label">The one thing that moved today</label>
+      <textarea class="field-input" id="signal" placeholder="e.g. OpenAI launched operator-mode agents for enterprise workflows..." rows="2" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="signal-box">
+      <label class="field-label">Source &amp; category</label>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <textarea class="field-input mono" id="source" placeholder="TechCrunch / Funding" style="min-height:28px;flex:1" rows="1" oninput="autoResize(this)"></textarea>
+        <div class="pattern-row" id="categoryTags" style="margin:0">
+          <span class="pattern-tag" onclick="toggleTag(this,'AI')">AI</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Funding')">Funding</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Policy')">Policy</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Earnings')">Earnings</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Acquisition')">Acquisition</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Startup')">Startup</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'Consumer')">Consumer</span>
+          <span class="pattern-tag" onclick="toggleTag(this,'India')">India</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule-label"><span>Five Lens Analysis · 10 min</span></div>
+
+  <!-- SECTION 2: FIVE LENSES -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num amber">02</span>
+      <span class="section-title">Run the Five Lenses</span>
+      <span class="section-time">2 min per lens · your own words</span>
+    </div>
+
+    <div class="lens-grid">
+      <div class="lens-card tech">
+        <label class="field-label">⬡ Technology shift — what new capability?</label>
+        <textarea class="field-input" placeholder="What became newly possible or cheaper because of this?" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="lens-card behavior">
+        <label class="field-label">◈ Behavior shift — how are humans changing?</label>
+        <textarea class="field-input" placeholder="What behavior does this reflect or accelerate?" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="lens-card bizmodel">
+        <label class="field-label">◇ Business model — who makes money differently?</label>
+        <textarea class="field-input" placeholder="Which business model wins here? Who loses?" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="lens-card capital">
+        <label class="field-label">▲ Capital flow — where does money go next?</label>
+        <textarea class="field-input" placeholder="Which sectors or companies attract capital because of this?" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+    </div>
+
+    <div class="lens-card india" style="margin-bottom:12px">
+      <label class="field-label">◉ India angle — what does this look like here in 2–3 years?</label>
+      <textarea class="field-input" placeholder="Will this reach India? How? Who builds it? What policy matters?" rows="2" oninput="autoResize(this)"></textarea>
+    </div>
+  </div>
+
+  <div class="rule-label"><span>Connect the dots · 10 min</span></div>
+
+  <!-- SECTION 3: CONNECT -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num accent">03</span>
+      <span class="section-title">Connect to Prior Signals</span>
+      <span class="section-time">10 min · patterns compound</span>
+    </div>
+
+    <div class="connect-box">
+      <div>
+        <label class="field-label">What does today's signal remind you of?</label>
+        <textarea class="field-input" placeholder="Link to something from last week, last month, or a known pattern..." rows="4" oninput="autoResize(this)"></textarea>
+      </div>
+      <div>
+        <label class="field-label">Emerging pattern I'm seeing</label>
+        <textarea class="field-input" placeholder="e.g. Every major AI funding round this month is infra, not apps. That's a platform-shift signal..." rows="4" oninput="autoResize(this)"></textarea>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <label class="field-label">Pattern tags — what themes are building?</label>
+      <div class="pattern-row" id="patternTags">
+        <span class="pattern-tag" onclick="toggleTag(this,'AI infra wave')">AI infra wave</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'India lagging')">India lagging</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'Platform consolidation')">Platform consolidation</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'Job market shift')">Job market shift</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'Capital rotation')">Capital rotation</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'Regulation incoming')">Regulation incoming</span>
+        <span class="pattern-tag" onclick="toggleTag(this,'Consumer behavior flip')">Consumer behavior flip</span>
+        <input class="pattern-custom" placeholder="+ add pattern..." onkeydown="addCustomTag(event,this)">
+      </div>
+    </div>
+  </div>
+
+  <div class="rule-label"><span>Position outputs · 5 min</span></div>
+
+  <!-- SECTION 4: POSITION -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-num rust">04</span>
+      <span class="section-title">My Position</span>
+      <span class="section-time">5 min · one line each</span>
+    </div>
+
+    <div class="output-row">
+      <div class="output-card invest">
+        <label class="field-label">Investing signal</label>
+        <textarea class="field-input" placeholder="If I were investing: I'd watch ___" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="output-card build">
+        <label class="field-label">Build / startup signal</label>
+        <textarea class="field-input" placeholder="If I were building: I'd explore ___" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+      <div class="output-card career">
+        <label class="field-label">Career signal</label>
+        <textarea class="field-input" placeholder="For my positioning: this signals ___" rows="3" oninput="autoResize(this)"></textarea>
+      </div>
+    </div>
+
+    <div class="signal-box">
+      <label class="field-label">My prediction — what happens next?</label>
+      <textarea class="field-input" id="prediction" placeholder="In 6–18 months, because of today's signal, I expect..." rows="2" oninput="autoResize(this)"></textarea>
+    </div>
+
+    <div class="signal-box" style="border-color:var(--border-strong)">
+      <label class="field-label">Confidence &amp; uncertainty — what am I missing?</label>
+      <textarea class="field-input" placeholder="I'm less sure about... / I'd need to know... / This could be wrong if..." rows="2" oninput="autoResize(this)"></textarea>
+    </div>
+  </div>
+
+  <!-- STREAK -->
+  <div class="streak-bar" id="streakBar">
+    <span class="streak-label">30-day streak —</span>
+    <span class="streak-count" id="streakCount">0 days</span>
+  </div>
+
+  <!-- SAVE BAR -->
+  <div class="save-bar">
+    <button class="save-btn" onclick="saveEntry()">Save today's brief</button>
+    <button class="export-btn" onclick="exportTxt()">Export as text</button>
+    <button class="export-btn" onclick="clearForm()">Clear form</button>
+    <span class="save-status" id="saveStatus">Unsaved</span>
+  </div>
+
+  <!-- PAST ENTRIES -->
+  <div class="past-section" id="pastSection" style="display:none">
+    <div class="past-header">
+      <span class="past-title">Previous briefs</span>
+      <span class="tip">stored locally in your browser</span>
+    </div>
+    <div class="past-list" id="pastList"></div>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'signal_strategy_briefs';
+
+function getToday(){
+  const d = new Date();
+  return d.toISOString().split('T')[0];
+}
+
+function formatDate(iso){
+  const d = new Date(iso + 'T00:00:00');
+  return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+function toggleTag(el, label){
+  el.classList.toggle('active');
+}
+
+function addCustomTag(e, input){
+  if(e.key === 'Enter' && input.value.trim()){
+    const tag = document.createElement('span');
+    tag.className = 'pattern-tag active';
+    tag.textContent = input.value.trim();
+    tag.onclick = () => tag.classList.toggle('active');
+    input.parentNode.insertBefore(tag, input);
+    input.value = '';
+    e.preventDefault();
+  }
+}
+
+function getActiveTags(containerId){
+  const container = document.getElementById(containerId);
+  if(!container) return [];
+  return [...container.querySelectorAll('.pattern-tag.active')].map(t => t.textContent);
+}
+
+function getAllTextareas(){
+  const areas = document.querySelectorAll('textarea');
+  const data = {};
+  areas.forEach((a,i) => { data['area_'+i] = a.value; });
+  return data;
+}
+
+function setAllTextareas(data){
+  const areas = document.querySelectorAll('textarea');
+  areas.forEach((a,i) => {
+    if(data['area_'+i]) {
+      a.value = data['area_'+i];
+      autoResize(a);
+    }
+  });
+}
+
+function loadBriefs(){
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch(e){ return []; }
+}
+
+function saveBriefs(briefs){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(briefs));
+}
+
+function saveEntry(){
+  const briefs = loadBriefs();
+  const today = getToday();
+  const entry = {
+    date: today,
+    signal: document.getElementById('signal').value,
+    source: document.getElementById('source').value,
+    categories: getActiveTags('categoryTags'),
+    patterns: getActiveTags('patternTags'),
+    prediction: document.getElementById('prediction').value,
+    textareas: getAllTextareas(),
+    savedAt: new Date().toISOString()
+  };
+  const idx = briefs.findIndex(b => b.date === today);
+  if(idx >= 0) briefs[idx] = entry;
+  else briefs.unshift(entry);
+  saveBriefs(briefs);
+  document.getElementById('saveStatus').textContent = 'Saved ' + new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  updateStreak();
+  renderPast();
+}
+
+function clearForm(){
+  if(!confirm('Clear today\'s form? Saved entries are kept.')) return;
+  document.querySelectorAll('textarea').forEach(a => { a.value=''; autoResize(a); });
+  document.querySelectorAll('.pattern-tag.active').forEach(t => t.classList.remove('active'));
+  document.getElementById('saveStatus').textContent = 'Cleared';
+}
+
+function exportTxt(){
+  const today = getToday();
+  const areas = document.querySelectorAll('textarea');
+  let out = `SIGNAL & STRATEGY — Daily Brief\n${formatDate(today)}\n${'─'.repeat(50)}\n\n`;
+  out += `SIGNAL: ${document.getElementById('signal').value}\n`;
+  out += `SOURCE: ${document.getElementById('source').value}\n\n`;
+  out += `FIVE LENSES:\n`;
+  [1,2,3,4].forEach((n,i) => {
+    const labels = ['Technology shift','Behavior shift','Business model','Capital flow'];
+    const val = areas[i+2] ? areas[i+2].value : '';
+    out += `\n${labels[i]}:\n${val}\n`;
+  });
+  out += `\nIndia angle:\n${areas[6] ? areas[6].value : ''}\n`;
+  out += `\nCONNECTION:\n${areas[7] ? areas[7].value : ''}\n`;
+  out += `\nPATTERN:\n${areas[8] ? areas[8].value : ''}\n`;
+  out += `\nMY POSITION:\nInvesting: ${areas[9] ? areas[9].value : ''}\nBuilding: ${areas[10] ? areas[10].value : ''}\nCareer: ${areas[11] ? areas[11].value : ''}\n`;
+  out += `\nPREDICTION:\n${document.getElementById('prediction').value}\n`;
+
+  const blob = new Blob([out], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `signal-strategy-${today}.txt`;
+  a.click();
+}
+
+function updateStreak(){
+  const briefs = loadBriefs();
+  const today = getToday();
+  let streak = 0;
+  const d = new Date();
+  for(let i=0;i<30;i++){
+    const iso = d.toISOString().split('T')[0];
+    if(briefs.find(b => b.date === iso)) streak++;
+    else if(i > 0) break;
+    d.setDate(d.getDate()-1);
+  }
+  document.getElementById('streakCount').textContent = streak + (streak===1?' day':' days');
+
+  const bar = document.getElementById('streakBar');
+  bar.querySelectorAll('.streak-day').forEach(el => el.remove());
+  const today2 = getToday();
+  const ref = new Date();
+  for(let i=29;i>=0;i--){
+    const d2 = new Date(); d2.setDate(ref.getDate()-i);
+    const iso = d2.toISOString().split('T')[0];
+    const el = document.createElement('div');
+    el.className = 'streak-day';
+    if(iso === today2) el.classList.add('today');
+    else if(briefs.find(b => b.date === iso)) el.classList.add('done');
+    el.title = formatDate(iso);
+    bar.insertBefore(el, document.getElementById('streakCount'));
+  }
+
+  const dayNum = briefs.length;
+  document.getElementById('dayCounter').textContent = String(dayNum).padStart(3,'0');
+}
+
+function renderPast(){
+  const briefs = loadBriefs();
+  const section = document.getElementById('pastSection');
+  const list = document.getElementById('pastList');
+  if(briefs.length === 0){ section.style.display='none'; return; }
+  section.style.display='block';
+  list.innerHTML = '';
+  briefs.slice(0,7).forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'past-entry';
+    el.innerHTML = `
+      <div class="past-date">${formatDate(b.date)}</div>
+      <div class="past-signal">${b.signal || '(no signal recorded)'}</div>
+      <div class="past-tags">${(b.categories||[]).slice(0,3).map(t=>`<span class="past-tag">${t}</span>`).join('')}</div>
+    `;
+    el.onclick = () => loadEntry(b);
+    list.appendChild(el);
+  });
+}
+
+function loadEntry(entry){
+  if(!confirm('Load this entry? Current unsaved work will be lost.')) return;
+  document.querySelectorAll('.pattern-tag.active').forEach(t => t.classList.remove('active'));
+  if(entry.textareas) setAllTextareas(entry.textareas);
+  (entry.categories||[]).forEach(cat => {
+    document.querySelectorAll('#categoryTags .pattern-tag').forEach(t => {
+      if(t.textContent === cat) t.classList.add('active');
+    });
+  });
+  (entry.patterns||[]).forEach(pat => {
+    document.querySelectorAll('#patternTags .pattern-tag').forEach(t => {
+      if(t.textContent === pat) t.classList.add('active');
+    });
+  });
+  document.getElementById('saveStatus').textContent = 'Viewing ' + formatDate(entry.date);
+}
+
+// TIMER
+let timerInterval = null;
+let timerSeconds = 1800;
+let timerRunning = false;
+const phases = [
+  {at:1800, label:'Scan source · 5 min'},
+  {at:1500, label:'Five lenses · 10 min'},
+  {at:900,  label:'Connect patterns · 10 min'},
+  {at:300,  label:'Position outputs · 5 min'},
+  {at:0,    label:'Done!'},
+];
+
+function getPhase(s){
+  for(let p of phases){ if(s <= p.at) return p.label; }
+  return 'Ready';
+}
+
+function updateTimerUI(){
+  const m = Math.floor(timerSeconds/60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  const pct = ((1800 - timerSeconds) / 1800) * 100;
+  document.getElementById('timerFill').style.width = Math.min(100,pct) + '%';
+  document.getElementById('phaseLabel').textContent = getPhase(timerSeconds);
+}
+
+function startTimer(){
+  if(timerRunning) return;
+  timerRunning = true;
+  document.getElementById('timerStart').textContent = 'Running...';
+  document.getElementById('timerStart').disabled = true;
+  timerInterval = setInterval(() => {
+    if(timerSeconds <= 0){
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('phaseLabel').textContent = 'Session complete!';
+      document.getElementById('timerStart').textContent = 'Done';
+      return;
+    }
+    timerSeconds--;
+    updateTimerUI();
+  }, 1000);
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 1800;
+  updateTimerUI();
+  document.getElementById('phaseLabel').textContent = 'Ready';
+  document.getElementById('timerStart').textContent = 'Start 30-min session';
+  document.getElementById('timerStart').disabled = false;
+}
+
+// INIT
+document.getElementById('dateDisplay').textContent = formatDate(getToday());
+updateTimerUI();
+updateStreak();
+renderPast();
+</script>
+</body>
+</html>
