@@ -1,73 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Clock - Multi Timezone</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal & Strategy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#f8f6f1;
+  color:#0d0d0b;
+  font-family:'Syne',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 24px;
+}
+.wrap{max-width:560px;width:100%}
+.label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:#7a7670;
+  margin-bottom:8px;
+}
+.title{
+  font-size:42px;
+  font-weight:800;
+  letter-spacing:-2px;
+  line-height:1;
+  margin-bottom:10px;
+}
+.title em{
+  font-family:'Instrument Serif',serif;
+  font-style:italic;
+  font-weight:400;
+  color:#1a472a;
+}
+.sub{
+  font-size:14px;
+  color:#7a7670;
+  line-height:1.6;
+  margin-bottom:40px;
+  max-width:400px;
+}
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{
+  background:#fff;
+  border:1px solid #e2ddd4;
+  border-radius:12px;
+  padding:24px 28px;
+  text-decoration:none;
+  color:#0d0d0b;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  transition:border-color .15s, transform .1s;
+}
+.card:hover{border-color:#0d0d0b;transform:translateY(-1px)}
+.card-left{}
+.card-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:#7a7670;
+  margin-bottom:6px;
+}
+.card-name{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+.card-desc{font-size:13px;color:#7a7670;line-height:1.4}
+.card-arrow{
+  font-size:20px;
+  color:#c8c2b6;
+  flex-shrink:0;
+}
+.card:hover .card-arrow{color:#0d0d0b}
+.card.primary{border-color:#1a472a}
+.card.primary .card-num{color:#1a472a}
+.footer{
+  margin-top:40px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:#c8c2b6;
+  letter-spacing:.08em;
+  text-align:center;
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>World Clock</h1>
-        <p class="subtitle">Current time in different time zones</p>
-        
-        <div class="clocks-grid">
-            <div class="clock-card">
-                <div class="timezone-label">New York (EST)</div>
-                <div class="digital-clock" id="clock-ny">00:00:00</div>
-                <div class="timezone-offset">UTC-5</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">London (GMT)</div>
-                <div class="digital-clock" id="clock-london">00:00:00</div>
-                <div class="timezone-offset">UTC+0</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">Paris (CET)</div>
-                <div class="digital-clock" id="clock-paris">00:00:00</div>
-                <div class="timezone-offset">UTC+1</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">Dubai (GST)</div>
-                <div class="digital-clock" id="clock-dubai">00:00:00</div>
-                <div class="timezone-offset">UTC+4</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">India (IST)</div>
-                <div class="digital-clock" id="clock-india">00:00:00</div>
-                <div class="timezone-offset">UTC+5:30</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">Singapore (SGT)</div>
-                <div class="digital-clock" id="clock-singapore">00:00:00</div>
-                <div class="timezone-offset">UTC+8</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">Tokyo (JST)</div>
-                <div class="digital-clock" id="clock-tokyo">00:00:00</div>
-                <div class="timezone-offset">UTC+9</div>
-            </div>
-
-            <div class="clock-card">
-                <div class="timezone-label">Sydney (AEDT)</div>
-                <div class="digital-clock" id="clock-sydney">00:00:00</div>
-                <div class="timezone-offset">UTC+11</div>
-            </div>
-        </div>
-
-        <div class="controls">
-            <button id="add-timezone-btn" class="btn">+ Add Custom Timezone</button>
-        </div>
-
-        <div id="custom-timezones" class="custom-timezones"></div>
-    </div>
-
-    <script src="script.js"></script>
+<div class="wrap">
+  <div class="label">Personal intelligence system</div>
+  <div class="title">Signal &amp; <em>Strategy</em></div>
+  <div class="sub">Your daily market intelligence system — 30 minutes a day to understand where the world is moving.</div>
+  <div class="cards">
+    <a href="daily-intelligence-brief.html" class="card primary">
+      <div class="card-left">
+        <div class="card-num">Layer 1 · Daily · 30 min</div>
+        <div class="card-name">Daily Intelligence Brief</div>
+        <div class="card-desc">One signal. Five lenses. Three position outputs. Log your prediction.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+    <a href="pattern-dashboard.html" class="card">
+      <div class="card-left">
+        <div class="card-num">Layer 2 · Weekly · 20 min</div>
+        <div class="card-name">Pattern Dashboard</div>
+        <div class="card-desc">See themes building across 30–90 days. Track predictions. Write your weekly synthesis.</div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+  </div>
+  <div class="footer">Data stays in your browser · Nothing leaves your device</div>
+</div>
 </body>
 </html>
